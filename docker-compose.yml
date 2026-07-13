@@ -5,10 +5,3 @@ services:
     image: frontpart:v1
     ports:
       - 80:80
-    expose:
-      - 80
-    networks:
-    #  - ??
-
-networks:
-# - ??
