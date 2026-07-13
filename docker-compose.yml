@@ -1,7 +1,0 @@
-services:
-  frontpart:
-    container_name: frontpartcontainer
-    build: .
-    image: frontpart:v1
-    ports:
-      - 80:80
