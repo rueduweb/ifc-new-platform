@@ -6,10 +6,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 body {
+  position: relative;
   height: 100vh;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
