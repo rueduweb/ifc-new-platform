@@ -6,7 +6,7 @@ export const routes: Routes = [
     path: 'home',
     title: 'Accueil',
 		loadComponent: () =>
-		import('./home/home').then((h) => h.Home)
+		import('./shared/layout/home/home').then((h) => h.Home)
   },
   {
     path: 'championship',
