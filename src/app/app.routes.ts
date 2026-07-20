@@ -12,24 +12,24 @@ export const routes: Routes = [
     path: 'championship',
     title: 'Championnat',
 		loadComponent: () =>
-		import('./championship/championship').then((c) => c.Championship)
+		import('./features/championship/championship').then((c) => c.Championship)
   },
   {
     path: 'team',
     title: 'Equipe',
 		loadComponent: () =>
-		import('./team/team').then((t) => t.Team)
+		import('./features/team/team').then((t) => t.Team)
   },
   {
     path: 'partner',
     title: 'Partenariat',
 		loadComponent: () =>
-		import('./partner/partner').then((p) => p.Partner)
+		import('./features/partner/partner').then((p) => p.Partner)
   },
   {
     path: 'dashboard',
     title: 'Tableau de bord',
 		loadComponent: () =>
-		import('./dashboard/dashboard').then((d) => d.Dashboard)
+		import('./features/dashboard/dashboard').then((d) => d.Dashboard)
   }
 ];
