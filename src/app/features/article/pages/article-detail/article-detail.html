@@ -1,0 +1,48 @@
+<div class="bg-white p-6 rounded-2xl">
+
+@if(article()){
+  <h1 class="text-center text-5xl font-mono py-8">
+    {{ article().title }}
+  </h1>
+
+  <div>
+    {{ article().description }}
+  </div>
+
+  <div class="rounded-[40px] bg-neutral-200
+  h-[360px] flex items-center justify-center">
+    image ou vidéo
+  </div>
+
+  <div class="col-span-2 border p-8 min-h-[420px]">
+    {{ article().content }}
+  </div>
+
+  <a routerLink="/article" class="underline">
+    retour à la liste
+  </a>
+
+  @if(editable()){
+
+    <div class="flex gap-4">
+
+      <button
+      (click)="edit.emit(article())">
+        <i class="fa-solid fa-pen"></i>
+      </button>
+
+      <button
+      (click)="remove.emit(article())">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+
+    </div>
+  }
+
+  <small>{{ article().authorId }}</small>
+}
+@else {
+  <div>Aucun article trouvé.</div>
+}
+
+</div>

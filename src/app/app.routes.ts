@@ -37,5 +37,11 @@ export const routes: Routes = [
     title: 'Articles',
 		loadComponent: () =>
 		import('./features/article/pages/article-list/article').then((a) => a.Article)
+  },
+  {
+    path: 'article/:id',
+    title: 'Article',
+    loadComponent: () =>
+    import('./features/article/pages/article-detail/article-detail').then((a) => a.ArticleDetail)
   }
 ];

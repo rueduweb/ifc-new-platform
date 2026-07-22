@@ -1,18 +1,27 @@
 @if (articlesService.loading()) {
 
-  <p>Chargement...</p>
+<p>Chargement...</p>
 
 }
 @else {
 
-    @for(article of articlesService.articles(); track article.id){
+<div
+class="grid
+grid-cols-3
+gap-8">
 
-      <p>
-        {{article.title}} / {{ article.description}}
-      </p>
+@for(article of articlesService.articles(); track article.id){
 
-    }
+    <app-article-card
+        [article]="article"
+        [editable]="true"
+        (edit)="onEdit($event)"
+        (remove)="onDelete($event)">
+    </app-article-card>
 
 }
 
+</div>
+
+}
 
