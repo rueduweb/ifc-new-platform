@@ -6,7 +6,7 @@ export const routes: Routes = [
     path: 'home',
     title: 'Accueil',
 		loadComponent: () =>
-		import('./shared/layout/home/home').then((h) => h.Home)
+		import('./home/home').then((h) => h.Home)
   },
   {
     path: 'championship',
@@ -31,5 +31,11 @@ export const routes: Routes = [
     title: 'Tableau de bord',
 		loadComponent: () =>
 		import('./features/dashboard/dashboard').then((d) => d.Dashboard)
+  },
+  {
+    path: 'article',
+    title: 'Articles',
+		loadComponent: () =>
+		import('./features/article/pages/article-list/article').then((a) => a.Article)
   }
 ];

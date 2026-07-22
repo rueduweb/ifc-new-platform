@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { Sidenav } from './shared/layout/sidenav/sidenav';
+import { Sidenav } from './sidenav/sidenav';
 import { SidenavToggle } from './shared/interfaces/sidenav-toggle';
-import { Body } from "./shared/layout/body/body";
+import { Body } from "./body/body";
 @Component({
   selector: 'app-root',
   imports: [CommonModule, Sidenav, Body],

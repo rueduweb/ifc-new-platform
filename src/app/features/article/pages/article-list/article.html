@@ -1,1 +1,18 @@
-<p>article works!</p>
+@if (articlesService.loading()) {
+
+  <p>Chargement...</p>
+
+}
+@else {
+
+    @for(article of articlesService.articles(); track article.id){
+
+      <p>
+        {{article.title}} / {{ article.description}}
+      </p>
+
+    }
+
+}
+
+

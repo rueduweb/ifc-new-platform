@@ -5,6 +5,11 @@ export const navbarData = [
     label: 'Accueil'
   },
   {
+    routeLink: 'article',
+    icon: 'fa-solid fa-newspaper',
+    label: 'Articles'
+  },
+  {
     routeLink: 'championship',
     icon: 'fa-solid fa-calendar-days',
     label: 'Championnat'
