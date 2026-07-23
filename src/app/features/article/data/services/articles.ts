@@ -1,21 +1,24 @@
 import { computed, inject, Service, signal } from '@angular/core';
 import { ArticlesApi } from './articles-api';
-import { Article } from '../models/article.model';
+import { Article, ArticlesState } from '../models/article.model';
 
 @Service()
 export class Articles {
   private readonly api = inject(ArticlesApi);
 
-  private readonly state = signal({ // the state stays in the signal
-    articles: [] as Article[],
+  private readonly state = signal<ArticlesState>({ // the state stays in the signal
+    articles: [],
+    selectedArticle: null,
     loading: false,
-    error: null as string | null
+    error: null
   });
 
-
+  // Selectors
   readonly articles = computed(() => this.state().articles);
 
   readonly loading = computed(() => this.state().loading);
+
+  readonly selectedArticle = computed(() => this.state().selectedArticle);
 
   readonly error = computed(() => this.state().error);
 
@@ -26,146 +29,119 @@ export class Articles {
         .sort((a,b)=>a.title.localeCompare(b.title))
   );
 
-  // From API Service
+  // Actions
   loadArticles(): void {
-    this.state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
+    this.startLoading();
     this.api.getAll().subscribe({
       next: articles => {
-        this.state.update(state => ({
-          ...state,
+        this.patchState({
           articles,
           loading: false
-        }));
+        });
       },
-      error: () => {
-        this.state.update(state => ({
-          ...state,
-          loading: false,
-          error: 'Error server occured.'
-        }));
-      }
+      error: () => this.setError('Error server occured.')
     });
   }
 
   loadOne(id: number): void {
-
-    this.state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
-
+    this.startLoading();
     this.api.getOneById(id).subscribe({
-
       next: article => {
-
-        this.state.update(state => {
-
+        this.patchState(state => {
           const index = state.articles.findIndex(a => a.id === article.id);
 
-          if (index === -1) {
-            return {
-              ...state,
-              articles: [...state.articles, article],
-              loading: false
-            };
-          }
-
-          const articles = [...state.articles];
-          articles[index] = article;
+          const articles = index === -1 ? [...state.articles, article] : state.articles.map(a =>
+            a.id === article.id ? article : a
+          );
 
           return {
-            ...state,
             articles,
+            selectedArticle: article,
             loading: false
           };
         });
       },
-
-      error: () => {
-        this.state.update(state => ({
-          ...state,
-          loading: false,
-          error: 'Erreur serveur'
-        }));
-      }
+      error: () => this.setError('Error server occured.')
     });
   }
 
   create(article: Omit<Article,'id'>): void {
-    this.state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
+    this.startLoading();
     this.api.create(article).subscribe({
-    next: article => {
-      this.state.update(state => ({
-      ...state,
-      articles: [...state.articles, article],
-      loading: false
-      }));
-    },
-    error: () => {
-      this.state.update(state => ({
-          ...state,
-          loading: false,
-          error: 'Error server occured.'
+      next: article => {
+        this.patchState(state => ({
+          articles: [...state.articles, article],
+          selectedArticle: article,
+          loading: false
         }));
-      }
+      },
+      error: () => this.setError('Error server occured.')
     });
   }
 
   update(article: Article): void {
-    this.state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
+    this.startLoading();
     this.api.update(article).subscribe({
-    next: article => {
-      this.state.update(state => ({
-        ...state,
-      articles: state.articles.map(a => a.id === article.id ? article : a),
-      loading: false
-      }));
-    },
-    error: () => {
-        this.state.update(state => ({
-          ...state,
-          loading: false,
-          error: 'Error server occured.'
+      next: article => {
+        this.patchState(state => ({
+          articles: state.articles.map(a => a.id === article.id ? article : a),
+          selectedArticle: state.selectedArticle?.id === article.id ? article : state.selectedArticle,
+          loading: false
         }));
-      }
+      },
+      error: () => this.setError('Error server occured.')
     });
   }
 
   delete(id: number): void {
-    this.state.update(state => ({
-      ...state,
-      loading: true,
-      error: null
-    }));
+    this.startLoading();
     this.api.delete(id).subscribe({
       next: () => {
-      this.state.update(state => ({
-        ...state,
-      articles: state.articles.filter(a => a.id !== id),
-      loading: false
+      this.patchState(state => ({
+        articles: state.articles.filter(a => a.id !== id),
+        selectedArticle: state.selectedArticle?.id === id ? null : state.selectedArticle,
+        loading: false
       }))
     },
-      error: () => {
-        this.state.update(state => ({
-          ...state,
-          loading: false,
-          error: 'Error server occured.'
-        }));
-      }
+      error: () => this.setError('Error server occured.')
+    });
+  }
+
+  selectArticle(article: Article | null): void {
+    this.patchState({
+      selectedArticle: article
+    });
+  }
+
+  clearSelection(): void {
+    this.patchState({
+      selectedArticle: null
+    });
+  }
+
+  // function to simulate the patchState() of @ngrx/signals
+  private patchState(
+    patch:
+      | Partial<ArticlesState>
+      | ((state: ArticlesState) => Partial<ArticlesState>)
+  ) {
+    this.state.update(state => ({
+      ...state,
+      ...(typeof patch === 'function' ? patch(state) : patch)
+    }));
+  }
+  // Helpers
+  private startLoading() {
+    this.patchState({
+      loading: true,
+      error: null
+    });
+  }
+
+  private setError(message: string) {
+    this.patchState({
+      loading: false,
+      error: message
     });
   }
 

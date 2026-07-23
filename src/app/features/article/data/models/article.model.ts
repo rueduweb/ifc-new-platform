@@ -6,7 +6,7 @@ export type Article = {
   authorId: number;
 }
 
-export interface ArticlesState { // prepare the store
+export type ArticlesState = {
   articles: Article[];
   selectedArticle: Article | null;
   loading: boolean;
