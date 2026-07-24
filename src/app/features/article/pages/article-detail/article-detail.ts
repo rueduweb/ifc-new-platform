@@ -1,6 +1,7 @@
-import { Component, input, output } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Article } from '../../data/models/article.model';
+import { Articles } from '../../data/services/articles';
 
 @Component({
   selector: 'app-article-detail',
@@ -10,12 +11,22 @@ import { Article } from '../../data/models/article.model';
 })
 export class ArticleDetail {
 
-  readonly article = input.required<Article>();
+  readonly articles = inject(Articles);
+
+  readonly id = input.required<string>();
 
   readonly editable = input(false);
 
   readonly edit = output<Article>();
 
   readonly remove = output<Article>();
+
+  constructor() {
+
+    effect(() => {
+      this.articles.selectArticle(+this.id());
+    });
+
+  }
 
 }

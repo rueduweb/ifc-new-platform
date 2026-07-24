@@ -8,7 +8,7 @@ export type Article = {
 
 export type ArticlesState = {
   articles: Article[];
-  selectedArticle: Article | null;
+  selectedId: number | null;
   loading: boolean;
   error: string | null;
 }

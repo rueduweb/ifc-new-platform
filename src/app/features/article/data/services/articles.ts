@@ -8,7 +8,7 @@ export class Articles {
 
   private readonly state = signal<ArticlesState>({ // the state stays in the signal
     articles: [],
-    selectedArticle: null,
+    selectedId: null,
     loading: false,
     error: null
   });
@@ -18,7 +18,13 @@ export class Articles {
 
   readonly loading = computed(() => this.state().loading);
 
-  readonly selectedArticle = computed(() => this.state().selectedArticle);
+  readonly selectedArticle = computed(() => {
+
+    const { articles, selectedId } = this.state();
+
+    return articles.find(a => a.id === selectedId) ?? null;
+
+  });
 
   readonly error = computed(() => this.state().error);
 
@@ -48,15 +54,13 @@ export class Articles {
     this.api.getOneById(id).subscribe({
       next: article => {
         this.patchState(state => {
-          const index = state.articles.findIndex(a => a.id === article.id);
-
-          const articles = index === -1 ? [...state.articles, article] : state.articles.map(a =>
-            a.id === article.id ? article : a
-          );
+          const exists = state.articles.some(a => a.id === article.id);
 
           return {
-            articles,
-            selectedArticle: article,
+            articles : exists ? state.articles.map(a =>
+                a.id === article.id ? article : a
+              ) : [...state.articles, article],
+            selectedId: article.id,
             loading: false
           };
         });
@@ -71,7 +75,7 @@ export class Articles {
       next: article => {
         this.patchState(state => ({
           articles: [...state.articles, article],
-          selectedArticle: article,
+          selectedId: article.id,
           loading: false
         }));
       },
@@ -85,7 +89,6 @@ export class Articles {
       next: article => {
         this.patchState(state => ({
           articles: state.articles.map(a => a.id === article.id ? article : a),
-          selectedArticle: state.selectedArticle?.id === article.id ? article : state.selectedArticle,
           loading: false
         }));
       },
@@ -99,7 +102,7 @@ export class Articles {
       next: () => {
       this.patchState(state => ({
         articles: state.articles.filter(a => a.id !== id),
-        selectedArticle: state.selectedArticle?.id === id ? null : state.selectedArticle,
+        selectedId: state.selectedId === id ? null : state.selectedId,
         loading: false
       }))
     },
@@ -107,15 +110,19 @@ export class Articles {
     });
   }
 
-  selectArticle(article: Article | null): void {
+  selectArticle(id: number): void {
     this.patchState({
-      selectedArticle: article
+      selectedId: id
     });
+
+    if(this.selectedArticle()) { return; }
+
+    this.loadOne(id);
   }
 
   clearSelection(): void {
     this.patchState({
-      selectedArticle: null
+      selectedId: null
     });
   }
 

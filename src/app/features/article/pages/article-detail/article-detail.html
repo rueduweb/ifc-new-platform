@@ -1,21 +1,24 @@
-<div class="bg-white p-6 rounded-2xl">
+<div class="p-6 rounded-2xl
+bg-linear-(135deg,#f5d0fe_10%,#fafaf9_80%,#e5e7eb_100%) h-[auto]">
 
-@if(article()){
-  <h1 class="text-center text-5xl font-mono py-8">
-    {{ article().title }}
+@if(articles.loading()) {
+  <p>Chargement...</p>
+} @else if (articles.selectedArticle(); as article) {
+  <h1 class="text-center text-3xl font-mono py-8">
+    {{ article.title }}
   </h1>
 
   <div>
-    {{ article().description }}
+    {{ article.description }}
   </div>
 
-  <div class="rounded-[40px] bg-neutral-200
+  <div class="rounded-[10px] bg-neutral-200
   h-[360px] flex items-center justify-center">
     image ou vidéo
   </div>
 
-  <div class="col-span-2 border p-8 min-h-[420px]">
-    {{ article().content }}
+  <div class="bg-gray-200 border-0 rounded-[10px] border min-h-[220px]">
+    {{ article.content }}
   </div>
 
   <a routerLink="/article" class="underline">
@@ -27,22 +30,21 @@
     <div class="flex gap-4">
 
       <button
-      (click)="edit.emit(article())">
+      (click)="edit.emit(article)">
         <i class="fa-solid fa-pen"></i>
       </button>
 
       <button
-      (click)="remove.emit(article())">
+      (click)="remove.emit(article)">
         <i class="fa-solid fa-trash"></i>
       </button>
 
     </div>
   }
 
-  <small>{{ article().authorId }}</small>
-}
-@else {
-  <div>Aucun article trouvé.</div>
+  <small>{{ article.authorId }}</small>
+} @else {
+  <p>Article non trouvé.</p>
 }
 
 </div>
